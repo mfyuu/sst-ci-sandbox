@@ -1,0 +1,62 @@
+name: Deploy to SST Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, closed]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+
+      # GitHub Actions ランナーにプリインストールされた Pulumi が
+      # SST 内部の Pulumi と競合するため削除
+      - name: Remove pre-installed Pulumi
+        run: rm -rf /usr/local/bin/pulumi*
+
+      - run: bun x sst deploy --stage pr-${{ github.event.pull_request.number }}
+
+  remove:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.5
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ap-northeast-1
+
+      # GitHub Actions ランナーにプリインストールされた Pulumi が
+      # SST 内部の Pulumi と競合するため削除
+      - name: Remove pre-installed Pulumi
+        run: rm -rf /usr/local/bin/pulumi*
+
+      - run: bun x sst remove --stage pr-${{ github.event.pull_request.number }}
