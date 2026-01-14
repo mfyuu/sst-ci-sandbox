@@ -33,7 +33,27 @@ jobs:
       - name: Remove pre-installed Pulumi
         run: rm -rf /usr/local/bin/pulumi*
 
-      - run: bun x sst deploy --stage pr-${{ github.event.pull_request.number }}
+      - name: Deploy SST
+        id: sst-deploy
+        run: |
+          OUTPUT=$(bun x sst deploy --stage pr-${{ github.event.pull_request.number }} 2>&1)
+          echo "$OUTPUT"
+
+          # 方法1: Complete の次の行から URL を取得
+          URL1=$(echo "$OUTPUT" | grep -A1 "Complete" | tail -1 | awk '{print $NF}')
+          echo "[方法1] Complete の次の行: $URL1"
+
+          # 方法2: cloudfront.net を含む URL を正規表現で検知
+          URL2=$(echo "$OUTPUT" | grep -oE 'https://[a-z0-9]+\.cloudfront\.net' | head -1)
+          echo "[方法2] cloudfront.net 検知: $URL2"
+
+          # どちらかが取れた方を使用
+          URL="${URL1:-$URL2}"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "[採用] Preview URL: $URL"
+
+      - name: Show preview URL
+        run: echo "Deployed to ${{ steps.sst-deploy.outputs.url }}"
 
   remove:
     if: github.event.action == 'closed'
