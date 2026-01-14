@@ -29,4 +29,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-region: ap-northeast-1
 
+      # GitHub Actions ランナーにプリインストールされた Pulumi が
+      # SST 内部の Pulumi と競合するため削除
+      - name: Remove pre-installed Pulumi
+        run: rm -rf /usr/local/bin/pulumi*
+
       - run: bun x sst deploy --stage ${{ github.ref_name }}
