@@ -43,11 +43,11 @@ jobs:
           message: |
             **Deployed to AWS**
             <table>
-            <tr><td>Latest commit:</td><td>[`${{ steps.meta.outputs.short_sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})</td></tr>
+            <tr><td>Latest commit:</td><td><a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"><code>${{ steps.meta.outputs.short_sha }}</code></a></td></tr>
             <tr><td>Status:</td><td>✅ Deploy successful!</td></tr>
-            <tr><td>Preview URL:</td><td>${{ steps.sst-deploy.outputs.url }}</td></tr>
+            <tr><td>Preview URL:</td><td><a href="${{ steps.sst-deploy.outputs.url }}">${{ steps.sst-deploy.outputs.url }}</a></td></tr>
             </table>
-            [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View logs</a>
 
   remove:
     if: github.event.action == 'closed'
