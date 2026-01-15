@@ -59,6 +59,8 @@ export default function Home() {
             Documentation
           </a>
         </div>
+        <p>MY_ENV_VAR1: {process.env.MY_ENV_VAR1}</p>
+        <p>MY_ENV_VAR2: {process.env.MY_ENV_VAR2}</p>
       </main>
     </div>
   );
