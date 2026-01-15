@@ -42,6 +42,7 @@ jobs:
           header: sst-preview
           message: |
             **Deployed to AWS**
+            ---
             <table>
             <tr><td>Latest commit:</td><td><a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"><code>${{ steps.meta.outputs.short_sha }}</code></a></td></tr>
             <tr><td>Status:</td><td>✅ Deploy successful!</td></tr>
