@@ -46,11 +46,11 @@ jobs:
           header: sst-preview
           message: |
             **Deployed to AWS**
-            | Latest commit: | [`${{ steps.meta.outputs.short_sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}) |
-            | - | - |
-            | Status: | ${{ steps.sst-deploy.outcome == 'success' && '✅ Deploy successful!' || '❌ Deploy failed' }} |
-            | Preview URL: | ${{ steps.sst-deploy.outputs.url && format('[Open Preview]({0})', steps.sst-deploy.outputs.url) || 'N/A' }} |
-
+            <table>
+            <tr><td>Latest commit:</td><td>[`${{ steps.meta.outputs.short_sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})</td></tr>
+            <tr><td>Status:</td><td>${{ steps.sst-deploy.outcome == 'success' && '✅ Deploy successful!' || '❌ Deploy failed' }}</td></tr>
+            <tr><td>Preview URL:</td><td>${{ steps.sst-deploy.outputs.url && format('[Open Preview]({0})', steps.sst-deploy.outputs.url) || 'N/A' }}</td></tr>
+            </table>
             [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
   remove:
