@@ -25,7 +25,8 @@ jobs:
       - name: Get short commit sha
         id: meta
         run: |
-          echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+          SHA="${{ github.event.pull_request.head.sha }}"
+          echo "short_sha=${SHA::7}" >> "$GITHUB_OUTPUT"
 
       - name: Deploy SST
         id: sst-deploy
@@ -44,7 +45,7 @@ jobs:
             **Preview Deployed to AWS via [SST](https://www.sst.dev/)**
             ---
             <table>
-            <tr><td>Latest commit:</td><td><a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}"><code>${{ steps.meta.outputs.short_sha }}</code></a></td></tr>
+            <tr><td>Latest commit:</td><td><a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha }}"><code>${{ steps.meta.outputs.short_sha }}</code></a></td></tr>
             <tr><td>Status:</td><td>✅ Deploy successful!</td></tr>
             <tr><td>Preview URL:</td><td><a href="${{ steps.sst-deploy.outputs.url }}">${{ steps.sst-deploy.outputs.url }}</a></td></tr>
             </table>
