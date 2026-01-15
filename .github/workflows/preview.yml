@@ -36,11 +36,7 @@ jobs:
           URL=$(echo "$OUTPUT" | grep -oE 'https://[a-z0-9]+\.cloudfront\.net' | head -1)
           echo "url=$URL" >> "$GITHUB_OUTPUT"
 
-      - name: Show preview URL
-        run: echo "Deployed to ${{ steps.sst-deploy.outputs.url }}"
-
       - name: Comment preview
-        if: always()
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: sst-preview
@@ -48,8 +44,8 @@ jobs:
             **Deployed to AWS**
             <table>
             <tr><td>Latest commit:</td><td>[`${{ steps.meta.outputs.short_sha }}`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})</td></tr>
-            <tr><td>Status:</td><td>${{ steps.sst-deploy.outcome == 'success' && '✅ Deploy successful!' || '❌ Deploy failed' }}</td></tr>
-            <tr><td>Preview URL:</td><td>${{ steps.sst-deploy.outputs.url && format('[Open Preview]({0})', steps.sst-deploy.outputs.url) || 'N/A' }}</td></tr>
+            <tr><td>Status:</td><td>✅ Deploy successful!</td></tr>
+            <tr><td>Preview URL:</td><td>${{ steps.sst-deploy.outputs.url }}</td></tr>
             </table>
             [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
 
