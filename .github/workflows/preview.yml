@@ -19,40 +19,5 @@ jobs:
       - uses: ./.github/actions/setup-aws-sst
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-      - name: Get short commit sha
-        id: meta
-        run: |
-          SHA="${{ github.event.pull_request.head.sha }}"
-          echo "short_sha=${SHA::7}" >> "$GITHUB_OUTPUT"
-      - name: Deploy SST
-        id: sst-deploy
-        run: |
-          OUTPUT=$(bun x sst deploy --stage pr-${{ github.event.pull_request.number }} 2>&1)
-          echo "$OUTPUT"
-
-          URL=$(echo "$OUTPUT" | grep -oE 'https://[a-z0-9]+\.cloudfront\.net' | head -1)
-          echo "url=$URL" >> "$GITHUB_OUTPUT"
-      - name: Comment preview
-        uses: marocchino/sticky-pull-request-comment@v2
-        with:
-          header: sst-preview
-          message: |
-            **Preview Deployed to AWS via [SST](https://www.sst.dev/)**
-            ---
-            <table>
-            <tr><td>Latest commit:</td><td><a href="${{ github.server_url }}/${{ github.repository }}/commit/${{ github.event.pull_request.head.sha }}"><code>${{ steps.meta.outputs.short_sha }}</code></a></td></tr>
-            <tr><td>Status:</td><td>✅ Deploy successful!</td></tr>
-            <tr><td>Preview URL:</td><td><a href="${{ steps.sst-deploy.outputs.url }}">${{ steps.sst-deploy.outputs.url }}</a></td></tr>
-            </table>
-            <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}">View logs</a>
-
-  remove:
-    if: github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-      - uses: ./.github/actions/setup-bun
-      - uses: ./.github/actions/setup-aws-sst
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-      - run: bun x sst remove --stage pr-${{ github.event.pull_request.number }}
+      - name: Deploy to AWS via SST
+        uses: mfyuu/sst-preview-action@v1
